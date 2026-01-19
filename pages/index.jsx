@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { Search, Home, MapPin, TrendingUp, CheckCircle, Calendar, Shield, Award, Users, ChevronRight, Star, Sparkles, BarChart3, Zap } from 'lucide-react';
 
 const PRIX_QUARTIERS_SAMPLE = {
@@ -8,10 +9,70 @@ const PRIX_QUARTIERS_SAMPLE = {
 };
 
 export default function LandingPageEstimation() {
+  const router = useRouter();
   const [searchQuartier, setSearchQuartier] = useState('');
   const [selectedType, setSelectedType] = useState('appartement');
 
+  // États pour l'autocomplétion d'adresse
+  const [addressInput, setAddressInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const timeoutRef = useRef(null);
+
   const formatPrice = (price) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
+
+  // Fetch address suggestions from API
+  const fetchSuggestions = async (query) => {
+    if (query.length < 3) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    try {
+      const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+      const data = await res.json();
+      setSuggestions(data.features || []);
+      setShowSuggestions(true);
+    } catch {
+      setSuggestions([]);
+    }
+  };
+
+  const handleAddressInput = (value) => {
+    setAddressInput(value);
+    setSelectedAddress(null);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => fetchSuggestions(value), 300);
+  };
+
+  const selectAddress = (feature) => {
+    const props = feature.properties;
+    setAddressInput(props.label || props.name);
+    setSelectedAddress({
+      address: props.label || props.name,
+      city: props.city || '',
+      postalCode: props.postcode || ''
+    });
+    setShowSuggestions(false);
+  };
+
+  const handleEstimerClick = () => {
+    if (selectedAddress) {
+      // Passer l'adresse via les query params
+      router.push({
+        pathname: '/estimateur',
+        query: {
+          address: selectedAddress.address,
+          city: selectedAddress.city,
+          postalCode: selectedAddress.postalCode
+        }
+      });
+    } else {
+      // Rediriger sans adresse pré-remplie
+      router.push('/estimateur');
+    }
+  };
 
   const getAllQuartiers = () => {
     const quartiers = [];
@@ -108,12 +169,31 @@ export default function LandingPageEstimation() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1 relative group">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60 group-focus-within:text-gold transition-colors z-10" size={20} />
-                      <input type="text" placeholder="Adresse de votre bien à Marseille..." className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border-2 border-gold-light/40 rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/30 transition-all text-primary placeholder:text-text-gray font-medium" />
+                      <input
+                        type="text"
+                        value={addressInput}
+                        onChange={(e) => handleAddressInput(e.target.value)}
+                        placeholder="Adresse de votre bien à Marseille..."
+                        className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border-2 border-gold-light/40 rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/30 transition-all text-primary placeholder:text-text-gray font-medium"
+                      />
+                      {showSuggestions && suggestions.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gold-light/40 rounded-xl shadow-xl z-20 max-h-60 overflow-y-auto">
+                          {suggestions.map((s, i) => (
+                            <div key={i} onClick={() => selectAddress(s)} className="px-4 py-3 hover:bg-gold/10 cursor-pointer border-b border-gold-light/20 last:border-0">
+                              <div className="font-medium text-primary">{s.properties.label}</div>
+                              <div className="text-sm text-text-gray">{s.properties.postcode} {s.properties.city}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <a href="/estimateur" className="relative px-8 py-4 bg-gradient-to-r from-gold via-gold to-gold-light text-white rounded-2xl font-bold overflow-hidden group shadow-2xl shadow-gold/50">
+                    <button
+                      onClick={handleEstimerClick}
+                      className="relative px-8 py-4 bg-gradient-to-r from-gold via-gold to-gold-light text-white rounded-2xl font-bold overflow-hidden group shadow-2xl shadow-gold/50 cursor-pointer"
+                    >
                       <span className="relative z-10 flex items-center gap-2">Estimer<ChevronRight className="group-hover:translate-x-1 transition-transform" size={20} /></span>
                       <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </a>
+                    </button>
                   </div>
                   <div className="flex items-center justify-center gap-6 mt-5 text-sm">
                     <div className="flex items-center gap-2 text-primary"><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div><span className="font-medium">Résultat immédiat</span></div>

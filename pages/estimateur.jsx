@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, Map, Calendar } from 'lucide-react';
 
 // Base de données complète des prix par quartier à Marseille
@@ -113,6 +114,7 @@ const PRIX_FALLBACK = {
 };
 
 export default function EstimateurPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -121,6 +123,7 @@ export default function EstimateurPage() {
   const [estimation, setEstimation] = useState({ min: 0, max: 0, avg: 0 });
   const [quartiers, setQuartiers] = useState([]);
   const [hasQuartierStep, setHasQuartierStep] = useState(false);
+  const [initializedFromUrl, setInitializedFromUrl] = useState(false);
 
   const totalSteps = hasQuartierStep ? 8 : 7;
 
@@ -154,6 +157,29 @@ export default function EstimateurPage() {
   });
 
   const timeoutRef = useRef(null);
+
+  // Récupérer l'adresse depuis l'URL au chargement
+  useEffect(() => {
+    if (router.isReady && !initializedFromUrl) {
+      const { address, city, postalCode } = router.query;
+      if (address || city || postalCode) {
+        setFormData(prev => ({
+          ...prev,
+          address: address || '',
+          city: city || '',
+          postalCode: postalCode || ''
+        }));
+
+        // Si on a un code postal, charger les quartiers
+        if (postalCode && PRIX_QUARTIERS[postalCode]) {
+          setQuartiers(Object.keys(PRIX_QUARTIERS[postalCode]));
+          setHasQuartierStep(true);
+        }
+
+        setInitializedFromUrl(true);
+      }
+    }
+  }, [router.isReady, router.query, initializedFromUrl]);
 
   // Fetch address suggestions
   const fetchSuggestions = async (query) => {
