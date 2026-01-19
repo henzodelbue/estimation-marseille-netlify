@@ -110,10 +110,10 @@ export default function LandingPageEstimation() {
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60 group-focus-within:text-gold transition-colors z-10" size={20} />
                       <input type="text" placeholder="Adresse de votre bien à Marseille..." className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border-2 border-gold-light/40 rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/30 transition-all text-primary placeholder:text-text-gray font-medium" />
                     </div>
-                    <button className="relative px-8 py-4 bg-gradient-to-r from-gold via-gold to-gold-light text-white rounded-2xl font-bold overflow-hidden group shadow-2xl shadow-gold/50">
+                    <a href="/estimateur" className="relative px-8 py-4 bg-gradient-to-r from-gold via-gold to-gold-light text-white rounded-2xl font-bold overflow-hidden group shadow-2xl shadow-gold/50">
                       <span className="relative z-10 flex items-center gap-2">Estimer<ChevronRight className="group-hover:translate-x-1 transition-transform" size={20} /></span>
                       <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </button>
+                    </a>
                   </div>
                   <div className="flex items-center justify-center gap-6 mt-5 text-sm">
                     <div className="flex items-center gap-2 text-primary"><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div><span className="font-medium">Résultat immédiat</span></div>
