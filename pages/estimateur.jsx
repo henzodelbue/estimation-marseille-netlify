@@ -1,72 +1,135 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, ChevronRight } from 'lucide-react';
+import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, Map } from 'lucide-react';
 
-// Base de données prix au m²
-const prixM2Database = {
-  // PARIS
-  "75001": { appartement: 13200, maison: 15500 },
-  "75002": { appartement: 12800, maison: 15000 },
-  "75003": { appartement: 12500, maison: 14800 },
-  "75004": { appartement: 13692, maison: 16000 },
-  "75005": { appartement: 12900, maison: 15200 },
-  "75006": { appartement: 14832, maison: 17500 },
-  "75007": { appartement: 14565, maison: 17200 },
-  "75008": { appartement: 13500, maison: 16000 },
-  "75009": { appartement: 11800, maison: 14000 },
-  "75010": { appartement: 9178, maison: 11000 },
-  "75011": { appartement: 9771, maison: 11500 },
-  "75012": { appartement: 9764, maison: 11600 },
-  "75013": { appartement: 8558, maison: 10200 },
-  "75014": { appartement: 9542, maison: 11300 },
-  "75015": { appartement: 10200, maison: 12000 },
-  "75016": { appartement: 12800, maison: 15200 },
-  "75017": { appartement: 10800, maison: 12800 },
-  "75018": { appartement: 9246, maison: 11000 },
-  "75019": { appartement: 8631, maison: 10300 },
-  "75020": { appartement: 8800, maison: 10500 },
-  // MARSEILLE
-  "13001": { appartement: 3281, maison: 4419 },
-  "13002": { appartement: 3664, maison: 4860 },
-  "13003": { appartement: 2030, maison: 3134 },
-  "13004": { appartement: 3078, maison: 4282 },
-  "13005": { appartement: 3528, maison: 5034 },
-  "13006": { appartement: 4074, maison: 6113 },
-  "13007": { appartement: 5615, maison: 7989 },
-  "13008": { appartement: 4919, maison: 7239 },
-  "13009": { appartement: 3683, maison: 5422 },
-  "13010": { appartement: 2969, maison: 4240 },
-  "13011": { appartement: 3713, maison: 4201 },
-  "13012": { appartement: 3856, maison: 5224 },
+// Base de données complète des prix par quartier à Marseille
+const PRIX_QUARTIERS = {
+  "13001": {
+    "Belsunce": { appartement: 2872, maison: 3106 },
+    "Le Chapitre": { appartement: 3110, maison: 4266 },
+    "Noailles": { appartement: 3198, maison: 4066 },
+    "Opéra": { appartement: 3907, maison: 6159 },
+    "Saint-Charles": { appartement: 3371, maison: 4634 },
+    "Thiers": { appartement: 3368, maison: 4947 }
+  },
+  "13002": {
+    "Les Grands Carmes": { appartement: 3245, maison: 4662 },
+    "L'Hôtel-de-Ville": { appartement: 4133, maison: 5284 },
+    "La Joliette": { appartement: 3138, maison: 4393 }
+  },
+  "13003": {
+    "Belle-de-Mai": { appartement: 2072, maison: 3485 },
+    "Saint-Mauront": { appartement: 1805, maison: 2844 },
+    "La Villette": { appartement: 2332, maison: 2871 }
+  },
+  "13004": {
+    "Les Chartreux": { appartement: 2930, maison: 4592 },
+    "Les Chutes-Lavie": { appartement: 2813, maison: 3918 },
+    "Les Cinq-Avenues": { appartement: 3330, maison: 4395 },
+    "La Blancarde": { appartement: 3099, maison: 4128 }
+  },
+  "13005": {
+    "Baille": { appartement: 3523, maison: 5041 },
+    "Le Camas": { appartement: 3596, maison: 4999 },
+    "La Conception": { appartement: 3491, maison: 5320 },
+    "Saint-Pierre": { appartement: 3322, maison: 4505 }
+  },
+  "13006": {
+    "Castellane": { appartement: 3933, maison: 6414 },
+    "Lodi": { appartement: 3678, maison: 4932 },
+    "Notre-Dame-du-Mont": { appartement: 3594, maison: 5077 },
+    "Palais-de-Justice": { appartement: 4384, maison: 6985 },
+    "Préfecture": { appartement: 3743, maison: 5602 },
+    "Vauban": { appartement: 4560, maison: 6850 }
+  },
+  "13007": {
+    "Bompard": { appartement: 5725, maison: 8348 },
+    "Endoume": { appartement: 6062, maison: 8159 },
+    "Les Îles (Frioul)": { appartement: 5265, maison: 9008 },
+    "Le Pharo": { appartement: 4599, maison: 5491 },
+    "Le Roucas-Blanc": { appartement: 6526, maison: 9040 },
+    "Saint-Lambert": { appartement: 4895, maison: 7408 },
+    "Saint-Victor": { appartement: 4563, maison: 7162 }
+  },
+  "13008": {
+    "Bonneveine": { appartement: 4751, maison: 7132 },
+    "Les Goudes": { appartement: 3811, maison: 6592 },
+    "Montredon": { appartement: 5670, maison: 7717 },
+    "Périer": { appartement: 4848, maison: 7362 },
+    "La Plage": { appartement: 6045, maison: 9163 },
+    "La Pointe Rouge": { appartement: 5163, maison: 7476 },
+    "Le Rouet": { appartement: 5163, maison: 7476 },
+    "Saint-Giniez": { appartement: 4749, maison: 7705 },
+    "Sainte-Anne": { appartement: 4468, maison: 6725 },
+    "Vieille-Chapelle": { appartement: 5053, maison: 6748 }
+  },
+  "13009": {
+    "Les Baumettes": { appartement: 3774, maison: 5103 },
+    "Le Cabot": { appartement: 3981, maison: 5353 },
+    "Carpiagne": { appartement: 3661, maison: 5406 },
+    "Mazargues": { appartement: 3891, maison: 5475 },
+    "La Panouse": { appartement: 2880, maison: 5484 },
+    "Le Redon": { appartement: 3812, maison: 5261 },
+    "Sainte-Marguerite": { appartement: 3292, maison: 5544 },
+    "Sormiou": { appartement: 4201, maison: 5287 },
+    "Vaufrèges": { appartement: 2895, maison: 5173 }
+  },
+  "13010": {
+    "La Capelette": { appartement: 2980, maison: 3665 },
+    "Menpenti": { appartement: 3275, maison: 4357 },
+    "Pont-de-Vivaux": { appartement: 2748, maison: 4221 },
+    "Saint-Loup": { appartement: 2838, maison: 4295 },
+    "Saint-Tronc": { appartement: 2978, maison: 4922 },
+    "La Timone": { appartement: 3304, maison: 4106 }
+  },
+  "13011": {
+    "Les Accates": { appartement: 4729, maison: 4774 },
+    "La Barasse": { appartement: 3615, maison: 3894 },
+    "Les Camoins": { appartement: 4421, maison: 4683 },
+    "Éoures": { appartement: 4355, maison: 5130 },
+    "La Millière": { appartement: 3108, maison: 3749 },
+    "La Pomme": { appartement: 3047, maison: 4073 },
+    "Saint-Marcel": { appartement: 3197, maison: 3764 },
+    "Saint-Menet": { appartement: 4481, maison: 4416 },
+    "La Treille": { appartement: 4276, maison: 4735 },
+    "La Valbarelle": { appartement: 2989, maison: 3665 },
+    "La Valentine": { appartement: 4172, maison: 4645 }
+  },
+  "13012": {
+    "Les Caillols": { appartement: 3937, maison: 4646 },
+    "La Fourragère": { appartement: 3734, maison: 5233 },
+    "Montolivet": { appartement: 3596, maison: 5230 },
+    "Saint-Barnabé": { appartement: 4158, maison: 5783 },
+    "Saint-Jean-du-Désert": { appartement: 3694, maison: 4716 },
+    "Saint-Julien": { appartement: 3577, maison: 4949 },
+    "Les Trois-Lucs": { appartement: 4166, maison: 4972 }
+  }
+};
+
+const PRIX_FALLBACK = {
   "13013": { appartement: 3380, maison: 3839 },
   "13014": { appartement: 2148, maison: 3121 },
   "13015": { appartement: 2161, maison: 2934 },
-  "13016": { appartement: 3226, maison: 3391 },
-  // LYON
-  "69001": { appartement: 4860, maison: 5940 },
-  "69002": { appartement: 5509, maison: 6800 },
-  "69003": { appartement: 4100, maison: 5000 },
-  "69004": { appartement: 4400, maison: 5400 },
-  "69005": { appartement: 4200, maison: 5100 },
-  "69006": { appartement: 5300, maison: 6500 },
-  "69007": { appartement: 4330, maison: 4530 },
-  "69008": { appartement: 3710, maison: 3860 },
-  "69009": { appartement: 3900, maison: 4100 }
+  "13016": { appartement: 3226, maison: 3391 }
 };
 
 export default function EstimateurPage() {
-  const [currentStep, setCurrentStep] = useState(0); // 0 = hero, 1-7 = steps
+  const [currentStep, setCurrentStep] = useState(1);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState('');
   const [showResult, setShowResult] = useState(false);
   const [estimation, setEstimation] = useState({ min: 0, max: 0, avg: 0 });
+  const [quartiers, setQuartiers] = useState([]);
+  const [hasQuartierStep, setHasQuartierStep] = useState(false);
+
+  const totalSteps = hasQuartierStep ? 8 : 7;
 
   const [formData, setFormData] = useState({
     propertyType: '',
     address: '',
     city: '',
     postalCode: '',
+    quartier: '',
     surface: '',
     rooms: '',
     bedrooms: '',
@@ -77,23 +140,16 @@ export default function EstimateurPage() {
     hasBalcony: false,
     hasTerrace: false,
     hasCellar: false,
-    hasDoubleOrientation: false,
-    hasGreenView: false,
     condition: '',
     constructionYear: '',
     dpe: 'inconnu',
     vue: '',
     luminosite: '',
-    standing: '',
-    nuisances: '',
     rdcType: '',
-    travauxCopro: '',
-    intentionVente: '',
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
-    rgpdConsent: false
+    phone: ''
   });
 
   const timeoutRef = useRef(null);
@@ -134,26 +190,41 @@ export default function EstimateurPage() {
 
   const formatPrice = (price) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
 
-  const getConditionLabel = (c) => ({ neuf: 'Neuf', excellent: 'Excellent état', bon: 'Bon état', a_rafraichir: 'À rafraîchir', a_renover: 'À rénover' }[c] || c);
-  const getIntentionLabel = (v) => ({ rapide: 'Vendre rapidement', prochainement: 'Vendre prochainement', plus_tard: 'Vendre plus tard', renseigner: 'Me renseigner', curiosite: 'Simple curiosité' }[v] || v);
+  const getConditionLabel = (c) => ({ neuf: 'Neuf', excellent: 'Excellent', bon: 'Bon état', a_rafraichir: 'À rafraîchir', a_renover: 'À rénover' }[c] || c);
+
+  // Load quartiers when postal code changes
+  const loadQuartiers = (postalCode) => {
+    if (PRIX_QUARTIERS[postalCode]) {
+      setQuartiers(Object.keys(PRIX_QUARTIERS[postalCode]));
+      setHasQuartierStep(true);
+      return true;
+    }
+    setQuartiers([]);
+    setHasQuartierStep(false);
+    return false;
+  };
 
   // Calculate estimation
   const calculateEstimation = () => {
     const surface = parseFloat(formData.surface) || 0;
-    const postalCode = formData.postalCode || '';
-    let basePricePerM2 = 3000;
+    const postalCode = formData.postalCode;
+    const quartier = formData.quartier;
+    const propertyType = formData.propertyType;
 
-    if (postalCode.length === 5) {
-      const priceData = prixM2Database[postalCode];
-      if (priceData) {
-        basePricePerM2 = priceData[formData.propertyType] || basePricePerM2;
-      }
+    let basePricePerM2;
+
+    if (PRIX_QUARTIERS[postalCode] && quartier && PRIX_QUARTIERS[postalCode][quartier]) {
+      basePricePerM2 = PRIX_QUARTIERS[postalCode][quartier][propertyType];
+    } else if (PRIX_FALLBACK[postalCode]) {
+      basePricePerM2 = PRIX_FALLBACK[postalCode][propertyType];
+    } else {
+      basePricePerM2 = 3500;
     }
 
     let totalFactors = 0;
 
     // Type de bien
-    if (formData.propertyType === 'maison') totalFactors += 0.20;
+    if (propertyType === 'maison') totalFactors += 0.20;
 
     // DPE
     const dpeFactors = { 'A': 0.05, 'B': 0.04, 'C': 0.03, 'D': 0, 'E': -0.03, 'F': -0.04, 'G': -0.05, 'inconnu': 0 };
@@ -172,7 +243,7 @@ export default function EstimateurPage() {
     }
 
     // Étage
-    if (formData.propertyType === 'appartement' && formData.floor !== '') {
+    if (propertyType === 'appartement' && formData.floor !== '') {
       const floor = parseInt(formData.floor, 10);
       if (!formData.hasElevator) {
         if (floor >= 6) totalFactors -= 0.15;
@@ -196,8 +267,9 @@ export default function EstimateurPage() {
     else if (surface > 200) totalFactors -= 0.15;
 
     // Extérieurs
-    if (formData.hasTerrace) totalFactors += 0.15;
     if (formData.hasBalcony) totalFactors += 0.03;
+    if (formData.hasTerrace) totalFactors += 0.08;
+    if (formData.hasCellar) totalFactors += 0.03;
 
     // Vue
     if (formData.vue === 'degagee') totalFactors += 0.07;
@@ -206,28 +278,14 @@ export default function EstimateurPage() {
     // Luminosité
     if (formData.luminosite === 'sombre') totalFactors -= 0.07;
 
-    // Standing
-    if (formData.standing === 'grand') totalFactors += 0.07;
-    else if (formData.standing === 'vieillissant') totalFactors -= 0.05;
-
-    // Nuisances
-    if (formData.nuisances === 'legeres') totalFactors -= 0.03;
-    else if (formData.nuisances === 'importantes') totalFactors -= 0.07;
-
-    // Autres
-    if (formData.hasDoubleOrientation) totalFactors += 0.03;
-    if (formData.hasGreenView) totalFactors += 0.03;
-    if (formData.travauxCopro === 'oui') totalFactors -= 0.04;
-
     basePricePerM2 = basePricePerM2 * (1 + totalFactors);
     let basePrice = surface * basePricePerM2;
 
-    if (formData.hasParking) basePrice += 15000;
-    if (formData.hasCellar) basePrice += 3000;
+    if (formData.hasParking) basePrice += 7000;
 
     setEstimation({
-      min: Math.round(basePrice * 0.9),
-      max: Math.round(basePrice * 1.1),
+      min: Math.round(basePrice * 0.85),
+      max: Math.round(basePrice * 1.15),
       avg: Math.round(basePrice)
     });
   };
@@ -246,42 +304,32 @@ export default function EstimateurPage() {
   };
 
   const startEstimation = () => {
-    setCurrentStep(7);
+    const resultStep = hasQuartierStep ? 8 : 7;
+    goToStep(resultStep);
     setIsLoading(true);
-    const messages = [
-      'Analyse de vos informations...',
-      'Étude du marché local...',
-      'Calcul de la fourchette de prix...',
-      'Préparation de votre estimation...'
-    ];
-    let i = 0;
-    setLoadingMessage(messages[0]);
-    const interval = setInterval(() => {
-      i++;
-      if (i >= messages.length) {
-        clearInterval(interval);
-        calculateEstimation();
-        submitLead();
-        setIsLoading(false);
-        setShowResult(true);
-      } else {
-        setLoadingMessage(messages[i]);
-      }
-    }, 900);
+
+    setTimeout(() => {
+      calculateEstimation();
+      submitLead();
+      setIsLoading(false);
+      setShowResult(true);
+    }, 1500);
   };
 
   const resetForm = () => {
     setFormData({
-      propertyType: '', address: '', city: '', postalCode: '', surface: '', rooms: '', bedrooms: '',
-      floor: '', totalFloors: '', hasElevator: false, hasParking: false, hasBalcony: false,
-      hasTerrace: false, hasCellar: false, hasDoubleOrientation: false, hasGreenView: false,
-      condition: '', constructionYear: '', dpe: 'inconnu', vue: '', luminosite: '', standing: '',
-      nuisances: '', rdcType: '', travauxCopro: '', intentionVente: '', firstName: '', lastName: '',
-      email: '', phone: '', rgpdConsent: false
+      propertyType: '', address: '', city: '', postalCode: '', quartier: '',
+      surface: '', rooms: '', bedrooms: '', floor: '', totalFloors: '',
+      hasElevator: false, hasParking: false, hasBalcony: false, hasTerrace: false,
+      hasCellar: false, condition: '', constructionYear: '', dpe: 'inconnu',
+      vue: '', luminosite: '', rdcType: '', firstName: '', lastName: '',
+      email: '', phone: ''
     });
-    setCurrentStep(0);
+    setCurrentStep(1);
     setShowResult(false);
     setEstimation({ min: 0, max: 0, avg: 0 });
+    setQuartiers([]);
+    setHasQuartierStep(false);
   };
 
   const goToStep = (step) => {
@@ -289,7 +337,23 @@ export default function EstimateurPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const progress = currentStep > 0 ? (currentStep / 7) * 100 : 0;
+  const handleStep2Submit = () => {
+    const hasQuartiers = loadQuartiers(formData.postalCode);
+    if (hasQuartiers) {
+      goToStep('2b');
+    } else {
+      goToStep(3);
+    }
+  };
+
+  const getBackStep = (fromStep) => {
+    if (fromStep === 3 && hasQuartierStep) return '2b';
+    if (fromStep === 3) return 2;
+    return fromStep - 1;
+  };
+
+  const progress = currentStep === '2b' ? (2.5 / totalSteps) * 100 : (parseInt(currentStep) / totalSteps) * 100;
+  const stepDisplay = currentStep === '2b' ? '2b' : currentStep;
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-white via-surface to-white">
@@ -329,77 +393,17 @@ export default function EstimateurPage() {
 
         <div className="max-w-4xl mx-auto px-6 py-8">
 
-          {/* HERO - Step 0 */}
-          {currentStep === 0 && (
-            <div className="backdrop-blur-2xl bg-white/80 border border-gold-light/40 rounded-3xl p-8 md:p-12 shadow-2xl">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl md:text-4xl font-black mb-4">
-                  <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Estimez gratuitement la valeur</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">de votre bien immobilier</span>
-                </h1>
-                <p className="text-text-gray">Obtenez une estimation en quelques clics, puis soyez recontacté par un expert.</p>
-              </div>
-
-              <div className="max-w-xl mx-auto">
-                <label className="block text-sm font-semibold text-text-gray mb-2">Adresse du bien à estimer</label>
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60" size={20} />
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => handleAddressInput(e.target.value)}
-                    placeholder="Ex : 12 rue de la République, 13001 Marseille"
-                    className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gold-light/40 rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/20 transition-all"
-                  />
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gold-light/40 rounded-xl shadow-xl z-20 max-h-60 overflow-y-auto">
-                      {suggestions.map((s, i) => (
-                        <div key={i} onClick={() => selectAddress(s)} className="px-4 py-3 hover:bg-gold/10 cursor-pointer border-b border-gold-light/20 last:border-0">
-                          <div className="font-medium text-primary">{s.properties.label}</div>
-                          <div className="text-sm text-text-gray">{s.properties.postcode} {s.properties.city}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={() => goToStep(1)}
-                  className="w-full mt-6 px-8 py-4 bg-gradient-to-r from-gold to-gold text-white rounded-2xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all shadow-xl shadow-gold/30"
-                >
-                  Estimer mon bien
-                </button>
-
-                <p className="text-center text-sm text-text-gray mt-4">Estimation gratuite, sans engagement. Vos données restent confidentielles.</p>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mt-10">
-                {[
-                  { number: '+1 247', label: 'estimations' },
-                  { number: '24h', label: 'pour être rappelé' },
-                  { number: '4.8/5', label: 'satisfaction' }
-                ].map((s, i) => (
-                  <div key={i} className="text-center p-4 backdrop-blur-xl bg-white/50 rounded-xl border border-gold-light/30">
-                    <div className="text-2xl font-black text-gold">{s.number}</div>
-                    <div className="text-xs text-text-gray">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Progress Bar */}
-          {currentStep > 0 && currentStep < 7 && (
+          {currentStep !== 7 && currentStep !== 8 && (
             <div className="mb-8">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold text-primary">Estimation de votre bien</span>
-                <span className="text-sm text-text-gray">Étape {currentStep} sur 7</span>
+                <span className="text-sm text-text-gray">Étape {stepDisplay} sur {totalSteps}</span>
               </div>
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-gold to-gold-light transition-all duration-500" style={{ width: `${progress}%` }}></div>
               </div>
-              <p className="text-center text-xs text-text-gray mt-2">Moins de 2 minutes - 100% gratuit</p>
+              <p className="text-center text-xs text-text-gray mt-2">Moins de 2 minutes - Gratuit et sans engagement</p>
             </div>
           )}
 
@@ -428,7 +432,7 @@ export default function EstimateurPage() {
               </div>
 
               <div className="flex justify-between mt-8">
-                <button onClick={() => goToStep(0)} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
+                <button disabled className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium opacity-50 cursor-not-allowed">Retour</button>
                 <button
                   onClick={() => goToStep(2)}
                   disabled={!formData.propertyType}
@@ -466,6 +470,7 @@ export default function EstimateurPage() {
                       {suggestions.map((s, i) => (
                         <div key={i} onClick={() => selectAddress(s)} className="px-4 py-3 hover:bg-gold/10 cursor-pointer border-b border-gold-light/20 last:border-0">
                           <div className="font-medium text-primary">{s.properties.label}</div>
+                          <div className="text-sm text-text-gray">{s.properties.postcode} {s.properties.city}</div>
                         </div>
                       ))}
                     </div>
@@ -499,8 +504,44 @@ export default function EstimateurPage() {
               <div className="flex justify-between mt-8">
                 <button onClick={() => goToStep(1)} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
                 <button
-                  onClick={() => goToStep(3)}
+                  onClick={handleStep2Submit}
                   disabled={!formData.address || !formData.city || !formData.postalCode}
+                  className="px-8 py-3 bg-gradient-to-r from-gold to-gold text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+                >
+                  Continuer
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2B - Quartiers */}
+          {currentStep === '2b' && (
+            <div className="backdrop-blur-2xl bg-white/80 border border-gold-light/40 rounded-3xl p-8 shadow-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-gold/10 rounded-xl"><Map className="text-gold" size={28} /></div>
+                <div>
+                  <h2 className="text-2xl font-bold text-primary">Dans quel quartier se situe votre bien ?</h2>
+                  <p className="text-text-gray text-sm">Sélectionnez le quartier correspondant.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mt-6">
+                {quartiers.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setFormData({ ...formData, quartier: q })}
+                    className={`p-4 border-2 rounded-xl text-left font-medium transition-all ${formData.quartier === q ? 'border-gold bg-gold/10 shadow-lg' : 'border-gold-light/40 hover:border-gold/50'}`}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex justify-between mt-8">
+                <button onClick={() => goToStep(2)} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
+                <button
+                  onClick={() => goToStep(3)}
+                  disabled={!formData.quartier}
                   className="px-8 py-3 bg-gradient-to-r from-gold to-gold text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                 >
                   Continuer
@@ -559,7 +600,7 @@ export default function EstimateurPage() {
               </div>
 
               <div className="flex justify-between mt-8">
-                <button onClick={() => goToStep(2)} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
+                <button onClick={() => goToStep(getBackStep(3))} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
                 <button
                   onClick={() => goToStep(4)}
                   disabled={!formData.surface || !formData.rooms || !formData.bedrooms}
@@ -578,7 +619,7 @@ export default function EstimateurPage() {
                 <div className="p-3 bg-gold/10 rounded-xl"><Building className="text-gold" size={28} /></div>
                 <div>
                   <h2 className="text-2xl font-bold text-primary">Caractéristiques du bien</h2>
-                  <p className="text-text-gray text-sm">Précisez les équipements et la localisation.</p>
+                  <p className="text-text-gray text-sm">Équipements et localisation dans le bâtiment.</p>
                 </div>
               </div>
 
@@ -627,16 +668,14 @@ export default function EstimateurPage() {
               )}
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Équipements et annexes</label>
+                <label className="block text-sm font-medium text-primary mb-2">Équipements</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { key: 'hasElevator', label: 'Ascenseur', show: formData.propertyType === 'appartement' },
                     { key: 'hasParking', label: 'Parking / Garage', show: true },
                     { key: 'hasBalcony', label: 'Balcon', show: true },
                     { key: 'hasTerrace', label: 'Terrasse', show: true },
-                    { key: 'hasCellar', label: 'Cave', show: true },
-                    { key: 'hasDoubleOrientation', label: 'Double orientation', show: true },
-                    { key: 'hasGreenView', label: 'Vue espace vert', show: true }
+                    { key: 'hasCellar', label: 'Cave', show: true }
                   ].filter(item => item.show).map((item) => (
                     <label key={item.key} className="flex items-center gap-3 p-3 border-2 border-gold-light/40 rounded-xl cursor-pointer hover:border-gold/50 transition-all">
                       <input
@@ -653,7 +692,7 @@ export default function EstimateurPage() {
 
               {/* Vue */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Vue depuis le logement</label>
+                <label className="block text-sm font-medium text-primary mb-2">Vue</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[{ v: 'degagee', l: 'Dégagée' }, { v: 'standard', l: 'Standard' }, { v: 'vis_a_vis', l: 'Vis-à-vis' }].map((item) => (
                     <button
@@ -676,38 +715,6 @@ export default function EstimateurPage() {
                       key={item.v}
                       onClick={() => setFormData({ ...formData, luminosite: item.v })}
                       className={`p-3 border-2 rounded-xl text-sm font-medium transition-all ${formData.luminosite === item.v ? 'border-gold bg-gold/10' : 'border-gold-light/40 hover:border-gold/50'}`}
-                    >
-                      {item.l}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Standing */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Standing de l'immeuble</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[{ v: 'grand', l: 'Grand standing' }, { v: 'standard', l: 'Standard' }, { v: 'vieillissant', l: 'Vieillissant' }].map((item) => (
-                    <button
-                      key={item.v}
-                      onClick={() => setFormData({ ...formData, standing: item.v })}
-                      className={`p-3 border-2 rounded-xl text-sm font-medium transition-all ${formData.standing === item.v ? 'border-gold bg-gold/10' : 'border-gold-light/40 hover:border-gold/50'}`}
-                    >
-                      {item.l}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Nuisances */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Nuisances sonores</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[{ v: 'aucune', l: 'Aucune' }, { v: 'legeres', l: 'Légères' }, { v: 'importantes', l: 'Importantes' }].map((item) => (
-                    <button
-                      key={item.v}
-                      onClick={() => setFormData({ ...formData, nuisances: item.v })}
-                      className={`p-3 border-2 rounded-xl text-sm font-medium transition-all ${formData.nuisances === item.v ? 'border-gold bg-gold/10' : 'border-gold-light/40 hover:border-gold/50'}`}
                     >
                       {item.l}
                     </button>
@@ -772,7 +779,7 @@ export default function EstimateurPage() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-1">Performance énergétique (DPE)</label>
+                <label className="block text-sm font-medium text-primary mb-1">DPE</label>
                 <select
                   value={formData.dpe}
                   onChange={(e) => setFormData({ ...formData, dpe: e.target.value })}
@@ -787,21 +794,6 @@ export default function EstimateurPage() {
                   <option value="F">F - Médiocre</option>
                   <option value="G">G - Très mauvais</option>
                 </select>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Travaux de copropriété prévus</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[{ v: 'non', l: 'Non / Ne sait pas' }, { v: 'oui', l: 'Oui' }].map((item) => (
-                    <button
-                      key={item.v}
-                      onClick={() => setFormData({ ...formData, travauxCopro: item.v })}
-                      className={`p-3 border-2 rounded-xl text-sm font-medium transition-all ${formData.travauxCopro === item.v ? 'border-gold bg-gold/10' : 'border-gold-light/40 hover:border-gold/50'}`}
-                    >
-                      {item.l}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="flex justify-between mt-8">
@@ -824,29 +816,7 @@ export default function EstimateurPage() {
                 <div className="p-3 bg-gold/10 rounded-xl"><User className="text-gold" size={28} /></div>
                 <div>
                   <h2 className="text-2xl font-bold text-primary">Recevez votre estimation</h2>
-                  <p className="text-text-gray text-sm">Quelques informations pour personnaliser l'accompagnement.</p>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-primary mb-2">Intention de vente</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    { v: 'rapide', l: 'Vendre rapidement', d: '0-3 mois' },
-                    { v: 'prochainement', l: 'Vendre prochainement', d: '3-6 mois' },
-                    { v: 'plus_tard', l: 'Vendre plus tard', d: '6-12 mois' },
-                    { v: 'renseigner', l: 'Me renseigner', d: 'Connaître la valeur' },
-                    { v: 'curiosite', l: 'Simple curiosité', d: 'Estimation indicative' }
-                  ].map((item) => (
-                    <button
-                      key={item.v}
-                      onClick={() => setFormData({ ...formData, intentionVente: item.v })}
-                      className={`p-4 border-2 rounded-xl text-left transition-all ${formData.intentionVente === item.v ? 'border-gold bg-gold/10' : 'border-gold-light/40 hover:border-gold/50'}`}
-                    >
-                      <div className="font-medium text-primary">{item.l}</div>
-                      <div className="text-xs text-text-gray">{item.d}</div>
-                    </button>
-                  ))}
+                  <p className="text-text-gray text-sm">Vos coordonnées pour recevoir l'estimation.</p>
                 </div>
               </div>
 
@@ -879,7 +849,7 @@ export default function EstimateurPage() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="Ex: jean.dupont@email.com"
+                  placeholder="Ex: jean@email.com"
                   className="w-full px-4 py-3 border-2 border-gold-light/40 rounded-xl focus:border-gold focus:outline-none"
                 />
               </div>
@@ -895,21 +865,11 @@ export default function EstimateurPage() {
                 />
               </div>
 
-              <label className="flex items-start gap-3 p-4 border-2 border-gold-light/40 rounded-xl cursor-pointer hover:border-gold/50 transition-all mb-6">
-                <input
-                  type="checkbox"
-                  checked={formData.rgpdConsent}
-                  onChange={(e) => setFormData({ ...formData, rgpdConsent: e.target.checked })}
-                  className="w-5 h-5 accent-gold mt-0.5"
-                />
-                <span className="text-sm text-primary">J'accepte que mes données soient utilisées pour être recontacté(e) dans le cadre de cette estimation.</span>
-              </label>
-
               <div className="flex justify-between mt-8">
                 <button onClick={() => goToStep(5)} className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium hover:border-gold transition-all">Retour</button>
                 <button
                   onClick={startEstimation}
-                  disabled={!formData.intentionVente || !formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.rgpdConsent}
+                  disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.phone}
                   className="px-8 py-3 bg-gradient-to-r from-gold to-gold text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                 >
                   Voir mon estimation
@@ -918,14 +878,14 @@ export default function EstimateurPage() {
             </div>
           )}
 
-          {/* STEP 7 - Résultat */}
-          {currentStep === 7 && (
+          {/* STEP 7/8 - Résultat */}
+          {(currentStep === 7 || currentStep === 8) && (
             <div className="backdrop-blur-2xl bg-white/80 border border-gold-light/40 rounded-3xl p-8 shadow-2xl">
               {isLoading && (
                 <div className="text-center py-12">
                   <div className="w-12 h-12 border-4 border-gold-light border-t-gold rounded-full animate-spin-slow mx-auto mb-6"></div>
-                  <p className="text-xl font-bold text-primary mb-2">Estimation en cours...</p>
-                  <p className="text-text-gray">{loadingMessage}</p>
+                  <p className="text-xl font-bold text-primary mb-2">Calcul de votre estimation...</p>
+                  <p className="text-text-gray">Analyse des données du marché local.</p>
                 </div>
               )}
 
@@ -936,21 +896,19 @@ export default function EstimateurPage() {
                       <CheckCircle className="text-white" size={32} />
                     </div>
                     <h2 className="text-2xl font-bold text-primary">Votre estimation est prête</h2>
-                    <p className="text-text-gray">Voici la fourchette de prix estimée pour votre bien.</p>
+                    <p className="text-text-gray">Fourchette de prix estimée pour votre bien.</p>
                   </div>
 
                   <div className="bg-gradient-to-br from-gold/10 to-gold-light/10 rounded-2xl p-8 text-center mb-8">
-                    <p className="text-sm text-text-gray mb-2">Fourchette d'estimation</p>
-                    <p className="text-4xl font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">{formatPrice(estimation.avg)}</p>
-                    <p className="text-sm text-text-gray">Prix moyen estimé</p>
-                    <div className="flex justify-center gap-8 mt-4 text-sm">
+                    <p className="text-4xl font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-4">{formatPrice(estimation.avg)}</p>
+                    <div className="flex justify-center gap-8 text-sm">
                       <div><span className="text-text-gray">Min:</span> <span className="font-bold text-primary">{formatPrice(estimation.min)}</span></div>
                       <div><span className="text-text-gray">Max:</span> <span className="font-bold text-primary">{formatPrice(estimation.max)}</span></div>
                     </div>
                   </div>
 
                   <div className="bg-surface/50 rounded-2xl p-6 mb-8">
-                    <h3 className="font-bold text-primary mb-4">Récapitulatif de votre bien</h3>
+                    <h3 className="font-bold text-primary mb-4">Récapitulatif</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between py-2 border-b border-gold-light/30">
                         <span className="text-text-gray">Type</span>
@@ -958,23 +916,21 @@ export default function EstimateurPage() {
                       </div>
                       <div className="flex justify-between py-2 border-b border-gold-light/30">
                         <span className="text-text-gray">Adresse</span>
-                        <span className="font-medium text-primary">{formData.address}, {formData.postalCode} {formData.city}</span>
+                        <span className="font-medium text-primary">{formData.address}</span>
                       </div>
+                      {formData.quartier && (
+                        <div className="flex justify-between py-2 border-b border-gold-light/30">
+                          <span className="text-text-gray">Quartier</span>
+                          <span className="font-medium text-primary">{formData.quartier}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between py-2 border-b border-gold-light/30">
                         <span className="text-text-gray">Surface</span>
                         <span className="font-medium text-primary">{formData.surface} m²</span>
                       </div>
-                      <div className="flex justify-between py-2 border-b border-gold-light/30">
-                        <span className="text-text-gray">Pièces</span>
-                        <span className="font-medium text-primary">{formData.rooms} pièces ({formData.bedrooms} chambres)</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-gold-light/30">
+                      <div className="flex justify-between py-2">
                         <span className="text-text-gray">État</span>
                         <span className="font-medium text-primary">{getConditionLabel(formData.condition)}</span>
-                      </div>
-                      <div className="flex justify-between py-2">
-                        <span className="text-text-gray">Construction</span>
-                        <span className="font-medium text-primary">{formData.constructionYear}</span>
                       </div>
                     </div>
                   </div>
