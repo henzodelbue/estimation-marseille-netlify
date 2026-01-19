@@ -1,4 +1,5 @@
 import React from 'react';
+import Navigation from '../components/Navigation';
 import { CheckCircle, Calendar, Phone, Mail, Home, ArrowLeft, Clock, MapPin } from 'lucide-react';
 
 export default function ConfirmationPage() {
@@ -23,25 +24,7 @@ export default function ConfirmationPage() {
       <div className="relative z-10">
 
         {/* NAV */}
-        <nav className="backdrop-blur-2xl bg-white/70 border-b border-gold-light/40 sticky top-0 z-50 shadow-2xl shadow-primary/5">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-gradient-to-br from-gold via-gold to-gold-light rounded-xl shadow-lg shadow-gold/50">
-                  <Home className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-gold via-gold to-gold-light bg-clip-text text-transparent">Estimation Marseille</div>
-                  <div className="text-xs text-text-gray font-medium">Prix au m² 2025</div>
-                </div>
-              </div>
-              <a href="/" className="flex items-center gap-2 text-primary hover:text-gold transition-all font-medium">
-                <ArrowLeft size={18} />
-                <span>Retour au site</span>
-              </a>
-            </div>
-          </div>
-        </nav>
+        <Navigation />
 
         {/* CONFIRMATION CONTENT */}
         <section className="pt-16 pb-24 px-6">

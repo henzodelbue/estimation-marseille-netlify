@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
+import Navigation from '../components/Navigation';
 import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, Map, Calendar } from 'lucide-react';
 
 // Base de données complète des prix par quartier à Marseille
@@ -231,15 +232,15 @@ export default function EstimateurPage() {
     return false;
   };
 
-  // Calculate estimation
+  // Calculate estimation - Formule simplifiée et réaliste
   const calculateEstimation = () => {
     const surface = parseFloat(formData.surface) || 0;
     const postalCode = formData.postalCode;
     const quartier = formData.quartier;
     const propertyType = formData.propertyType;
 
+    // 1. Prix de base au m² selon quartier
     let basePricePerM2;
-
     if (PRIX_QUARTIERS[postalCode] && quartier && PRIX_QUARTIERS[postalCode][quartier]) {
       basePricePerM2 = PRIX_QUARTIERS[postalCode][quartier][propertyType];
     } else if (PRIX_FALLBACK[postalCode]) {
@@ -248,78 +249,31 @@ export default function EstimateurPage() {
       basePricePerM2 = 3500;
     }
 
-    let totalFactors = 0;
-
-    // Type de bien
-    if (propertyType === 'maison') totalFactors += 0.20;
-
-    // DPE
-    const dpeFactors = { 'A': 0.05, 'B': 0.04, 'C': 0.03, 'D': 0, 'E': -0.03, 'F': -0.04, 'G': -0.05, 'inconnu': 0 };
-    totalFactors += dpeFactors[formData.dpe] || 0;
-
-    // Condition
-    const conditionFactors = { neuf: 0.15, excellent: 0.05, bon: 0, a_rafraichir: -0.07, a_renover: -0.15 };
-    totalFactors += conditionFactors[formData.condition] || 0;
-
-    // Année
-    const year = parseInt(formData.constructionYear, 10);
-    if (!isNaN(year)) {
-      const age = new Date().getFullYear() - year;
-      if (age < 5) totalFactors += 0.10;
-      else if (age > 50) totalFactors -= 0.10;
-    }
-
-    // Étage
-    if (propertyType === 'appartement' && formData.floor !== '') {
-      const floor = parseInt(formData.floor, 10);
-      if (!formData.hasElevator) {
-        if (floor >= 6) totalFactors -= 0.15;
-        else if (floor === 5) totalFactors -= 0.12;
-        else if (floor === 4) totalFactors -= 0.10;
-        else if (floor === 1) totalFactors -= 0.07;
-        else if (floor === 0) {
-          totalFactors -= formData.rdcType === 'rue' ? 0.17 : formData.rdcType === 'cour' ? 0.10 : 0.15;
-        }
-      } else {
-        if (floor >= 4) totalFactors += 0.05;
-        else if (floor === 1) totalFactors -= 0.03;
-        else if (floor === 0) {
-          totalFactors -= formData.rdcType === 'rue' ? 0.15 : formData.rdcType === 'cour' ? 0.08 : 0.10;
-        }
-      }
-    }
-
-    // Surface
-    if (surface < 50) totalFactors += 0.07;
-    else if (surface > 200) totalFactors -= 0.15;
-
-    // Extérieurs
-    if (formData.hasBalcony) totalFactors += 0.03;
-    if (formData.hasTerrace) totalFactors += 0.08;
-    if (formData.hasCellar) totalFactors += 0.03;
-
-    // Vue
-    if (formData.vue === 'degagee') totalFactors += 0.07;
-    else if (formData.vue === 'vis_a_vis') totalFactors -= 0.05;
-
-    // Luminosité
-    if (formData.luminosite === 'sombre') totalFactors -= 0.07;
-
-    // Surface extérieure (jardin, cour, etc.)
-    const surfaceExterieur = parseFloat(formData.surfaceExterieur) || 0;
-    if (surfaceExterieur > 0) {
-      // Un espace extérieur ajoute de la valeur, surtout en appartement
-      if (surfaceExterieur >= 50) totalFactors += 0.12;
-      else if (surfaceExterieur >= 30) totalFactors += 0.10;
-      else if (surfaceExterieur >= 15) totalFactors += 0.07;
-      else totalFactors += 0.04;
-    }
-
-    basePricePerM2 = basePricePerM2 * (1 + totalFactors);
+    // 2. Calcul de base : surface × prix/m²
     let basePrice = surface * basePricePerM2;
 
-    if (formData.hasParking) basePrice += 7000;
+    // 3. Ajustement selon l'état (seul facteur en %)
+    const conditionFactors = { neuf: 0.15, excellent: 0.10, bon: 0, a_rafraichir: -0.05, a_renover: -0.10 };
+    const conditionFactor = conditionFactors[formData.condition] || 0;
+    basePrice = basePrice * (1 + conditionFactor);
 
+    // 4. Bonus fixes en € pour les atouts
+    // Jardin/extérieur : (surface ÷ 3) × prix/m²
+    const surfaceExterieur = parseFloat(formData.surfaceExterieur) || 0;
+    if (surfaceExterieur > 0) {
+      basePrice += (surfaceExterieur / 3) * basePricePerM2;
+    }
+
+    // Parking : +20 000€
+    if (formData.hasParking) basePrice += 20000;
+
+    // Cave : +5 000€
+    if (formData.hasCellar) basePrice += 5000;
+
+    // Terrasse : +10 000€
+    if (formData.hasTerrace) basePrice += 10000;
+
+    // 5. Fourchette ±15%
     setEstimation({
       min: Math.round(basePrice * 0.85),
       max: Math.round(basePrice * 1.15),
@@ -411,22 +365,7 @@ export default function EstimateurPage() {
 
       <div className="relative z-10">
         {/* NAV */}
-        <nav className="backdrop-blur-2xl bg-white/70 border-b border-gold-light/40 sticky top-0 z-50 shadow-2xl shadow-primary/5">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <a href="/" className="flex items-center gap-3">
-                <div className="p-2.5 bg-gradient-to-br from-gold via-gold to-gold-light rounded-xl shadow-lg shadow-gold/50">
-                  <Home className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-gold via-gold to-gold-light bg-clip-text text-transparent">Estimation Marseille</div>
-                  <div className="text-xs text-text-gray font-medium">Prix au m² 2025</div>
-                </div>
-              </a>
-              <a href="/" className="text-primary hover:text-gold transition-all font-medium">Retour au site</a>
-            </div>
-          </div>
-        </nav>
+        <Navigation />
 
         <div className="max-w-4xl mx-auto px-6 py-8">
 

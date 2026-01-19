@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
+import Navigation from '../components/Navigation';
 import { Search, Home, MapPin, TrendingUp, CheckCircle, Calendar, Shield, Award, Users, ChevronRight, Star, Sparkles, BarChart3, Zap } from 'lucide-react';
 
 const PRIX_QUARTIERS_SAMPLE = {
@@ -114,32 +115,9 @@ export default function LandingPageEstimation() {
       `}</style>
 
       <div className="relative z-10">
-        
+
         {/* NAV */}
-        <nav className="backdrop-blur-2xl bg-white/70 border-b border-gold-light/40 sticky top-0 z-50 shadow-2xl shadow-primary/5">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-gradient-to-br from-gold via-gold to-gold-light rounded-xl shadow-lg shadow-gold/50">
-                  <Home className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-gold via-gold to-gold-light bg-clip-text text-transparent">Estimation Marseille</div>
-                  <div className="text-xs text-text-gray font-medium">Prix au m² 2025</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 md:gap-6">
-                <a href="#prix" className="hidden md:block text-primary hover:text-gold transition-all font-medium relative group">Prix<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all"></span></a>
-                <a href="#guide" className="hidden md:block text-primary hover:text-gold transition-all font-medium relative group">Guide<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all"></span></a>
-                <a href="#faq" className="hidden md:block text-primary hover:text-gold transition-all font-medium relative group">FAQ<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all"></span></a>
-                <a href="https://calendly.com/henzo-delbue-llinaresimmo/30min" className="relative px-4 md:px-6 py-2 md:py-2.5 bg-gradient-to-r from-gold to-gold text-white rounded-xl font-medium text-sm md:text-base overflow-hidden group shadow-lg shadow-gold/30">
-                  <span className="relative z-10">Prendre RDV</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <Navigation />
 
         {/* HERO */}
         <section className="pt-20 pb-24 px-6">
