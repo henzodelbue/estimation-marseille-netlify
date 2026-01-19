@@ -305,6 +305,16 @@ export default function EstimateurPage() {
     // Luminosité
     if (formData.luminosite === 'sombre') totalFactors -= 0.07;
 
+    // Surface extérieure (jardin, cour, etc.)
+    const surfaceExterieur = parseFloat(formData.surfaceExterieur) || 0;
+    if (surfaceExterieur > 0) {
+      // Un espace extérieur ajoute de la valeur, surtout en appartement
+      if (surfaceExterieur >= 50) totalFactors += 0.12;
+      else if (surfaceExterieur >= 30) totalFactors += 0.10;
+      else if (surfaceExterieur >= 15) totalFactors += 0.07;
+      else totalFactors += 0.04;
+    }
+
     basePricePerM2 = basePricePerM2 * (1 + totalFactors);
     let basePrice = surface * basePricePerM2;
 
