@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, Map } from 'lucide-react';
+import { Home, MapPin, Maximize, Building, Sparkles, User, CheckCircle, Map, Calendar } from 'lucide-react';
 
 // Base de données complète des prix par quartier à Marseille
 const PRIX_QUARTIERS = {
@@ -131,6 +131,7 @@ export default function EstimateurPage() {
     postalCode: '',
     quartier: '',
     surface: '',
+    surfaceExterieur: '',
     rooms: '',
     bedrooms: '',
     floor: '',
@@ -319,7 +320,7 @@ export default function EstimateurPage() {
   const resetForm = () => {
     setFormData({
       propertyType: '', address: '', city: '', postalCode: '', quartier: '',
-      surface: '', rooms: '', bedrooms: '', floor: '', totalFloors: '',
+      surface: '', surfaceExterieur: '', rooms: '', bedrooms: '', floor: '', totalFloors: '',
       hasElevator: false, hasParking: false, hasBalcony: false, hasTerrace: false,
       hasCellar: false, condition: '', constructionYear: '', dpe: 'inconnu',
       vue: '', luminosite: '', rdcType: '', firstName: '', lastName: '',
@@ -596,6 +597,17 @@ export default function EstimateurPage() {
                       className="w-full px-4 py-3 border-2 border-gold-light/40 rounded-xl focus:border-gold focus:outline-none"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-primary mb-1">Surface jardin/extérieur (m²) <span className="text-text-gray font-normal">- optionnel</span></label>
+                  <input
+                    type="number"
+                    value={formData.surfaceExterieur}
+                    onChange={(e) => setFormData({ ...formData, surfaceExterieur: e.target.value })}
+                    placeholder="Ex: 50"
+                    min="0"
+                    className="w-full px-4 py-3 border-2 border-gold-light/40 rounded-xl focus:border-gold focus:outline-none"
+                  />
                 </div>
               </div>
 
@@ -935,10 +947,19 @@ export default function EstimateurPage() {
                     </div>
                   </div>
 
-                  <div className="text-center">
+                  <div className="text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a
+                      href="https://calendly.com/henzo-delbue-llinaresimmo/30min"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-gold to-gold text-white rounded-2xl font-bold hover:shadow-2xl hover:scale-[1.02] transition-all shadow-xl shadow-gold/30"
+                    >
+                      <Calendar size={20} />
+                      Prendre rendez-vous
+                    </a>
                     <button
                       onClick={resetForm}
-                      className="px-8 py-4 bg-gradient-to-r from-gold to-gold text-white rounded-2xl font-bold hover:shadow-2xl hover:scale-[1.02] transition-all shadow-xl shadow-gold/30"
+                      className="px-8 py-4 border-2 border-gold text-gold rounded-2xl font-bold hover:bg-gold/10 transition-all"
                     >
                       Nouvelle estimation
                     </button>
