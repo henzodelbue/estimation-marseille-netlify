@@ -174,7 +174,7 @@ export default function QuiSommesNousPage() {
         {/* Footer */}
         <footer className="border-t border-gold-light/40 backdrop-blur-xl bg-white/70 py-6 md:py-8 px-4 md:px-6">
           <div className="max-w-7xl mx-auto text-center">
-            <img src="/logo.png" alt="Estimation Marseille" className="h-10 md:h-12 w-auto mx-auto mb-3" />
+            <img src="/logo.png" alt="Estimation Marseille" className="h-14 md:h-16 w-auto mx-auto mb-3" />
             <p className="text-xs md:text-sm text-text-gray">&copy; 2025 Henzo DEL BUE • Llinares Immobilier</p>
           </div>
         </footer>
