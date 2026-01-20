@@ -398,24 +398,16 @@ export default function EstimateurPage() {
                 {['appartement', 'maison'].map((type) => (
                   <button
                     key={type}
-                    onClick={() => setFormData({ ...formData, propertyType: type })}
-                    className={`p-6 border-2 rounded-2xl text-center transition-all ${formData.propertyType === type ? 'border-gold bg-gold/10 shadow-lg' : 'border-gold-light/40 hover:border-gold/50'}`}
+                    onClick={() => {
+                      setFormData({ ...formData, propertyType: type });
+                      goToStep(2);
+                    }}
+                    className={`p-6 border-2 rounded-2xl text-center transition-all hover:border-gold hover:bg-gold/5 ${formData.propertyType === type ? 'border-gold bg-gold/10 shadow-lg' : 'border-gold-light/40'}`}
                   >
                     {type === 'appartement' ? <Building className="mx-auto text-gold mb-3" size={36} /> : <Home className="mx-auto text-gold mb-3" size={36} />}
                     <span className="font-bold text-primary capitalize">{type}</span>
                   </button>
                 ))}
-              </div>
-
-              <div className="flex justify-between mt-8">
-                <button disabled className="px-6 py-3 border-2 border-gold-light/40 rounded-xl font-medium opacity-50 cursor-not-allowed">Retour</button>
-                <button
-                  onClick={() => goToStep(2)}
-                  disabled={!formData.propertyType}
-                  className="px-8 py-3 bg-gradient-to-r from-gold to-gold text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
-                >
-                  Continuer
-                </button>
               </div>
             </div>
           )}
