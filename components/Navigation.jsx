@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Menu, X, Calculator, Calendar, User } from 'lucide-react';
+import { Menu, X, Calculator, Calendar, User } from 'lucide-react';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,13 +16,11 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-gold via-gold to-gold-light rounded-xl shadow-lg shadow-gold/50">
-              <Home className="text-white" size={24} />
-            </div>
-            <div>
-              <div className="text-xl font-bold bg-gradient-to-r from-gold via-gold to-gold-light bg-clip-text text-transparent">Estimation Marseille</div>
-              <div className="text-xs text-text-gray font-medium">Prix au m² 2025</div>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Estimation Marseille"
+              className="h-12 md:h-14 w-auto"
+            />
           </a>
 
           {/* Desktop Navigation */}
