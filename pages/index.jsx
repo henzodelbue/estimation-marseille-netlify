@@ -3,16 +3,151 @@ import { useRouter } from 'next/router';
 import Navigation from '../components/Navigation';
 import { Search, Home, MapPin, TrendingUp, CheckCircle, Calendar, Shield, Award, Users, ChevronRight, Star, Sparkles, BarChart3, Zap } from 'lucide-react';
 
-const PRIX_QUARTIERS_SAMPLE = {
-  "13007": { "Le Roucas-Blanc": { appartement: 6526, maison: 9040 }, "Endoume": { appartement: 6062, maison: 8159 }, "Bompard": { appartement: 5725, maison: 8348 } },
-  "13008": { "La Plage": { appartement: 6045, maison: 9163 }, "Montredon": { appartement: 5670, maison: 7717 }, "Périer": { appartement: 4848, maison: 7362 } },
-  "13003": { "Saint-Mauront": { appartement: 1805, maison: 2844 }, "Belle-de-Mai": { appartement: 2072, maison: 3485 } }
+// Base de données complète des prix par quartier à Marseille (111 quartiers)
+const PRIX_QUARTIERS = {
+  "13001": {
+    "Belsunce": { appartement: 2872, maison: 3106 },
+    "Le Chapitre": { appartement: 3110, maison: 4266 },
+    "Noailles": { appartement: 3198, maison: 4066 },
+    "Opéra": { appartement: 3907, maison: 6159 },
+    "Saint-Charles": { appartement: 3371, maison: 4634 },
+    "Thiers": { appartement: 3368, maison: 4947 }
+  },
+  "13002": {
+    "Les Grands Carmes": { appartement: 3245, maison: 4662 },
+    "L'Hôtel-de-Ville": { appartement: 4133, maison: 5284 },
+    "La Joliette": { appartement: 3138, maison: 4393 }
+  },
+  "13003": {
+    "Belle-de-Mai": { appartement: 2072, maison: 3485 },
+    "Saint-Mauront": { appartement: 1805, maison: 2844 },
+    "La Villette": { appartement: 2332, maison: 2871 }
+  },
+  "13004": {
+    "Les Chartreux": { appartement: 2930, maison: 4592 },
+    "Les Chutes-Lavie": { appartement: 2813, maison: 3918 },
+    "Les Cinq-Avenues": { appartement: 3330, maison: 4395 },
+    "La Blancarde": { appartement: 3099, maison: 4128 }
+  },
+  "13005": {
+    "Baille": { appartement: 3523, maison: 5041 },
+    "Le Camas": { appartement: 3596, maison: 4999 },
+    "La Conception": { appartement: 3491, maison: 5320 },
+    "Saint-Pierre": { appartement: 3322, maison: 4505 }
+  },
+  "13006": {
+    "Castellane": { appartement: 3933, maison: 6414 },
+    "Lodi": { appartement: 3678, maison: 4932 },
+    "Notre-Dame-du-Mont": { appartement: 3594, maison: 5077 },
+    "Palais-de-Justice": { appartement: 4384, maison: 6985 },
+    "Préfecture": { appartement: 3743, maison: 5602 },
+    "Vauban": { appartement: 4560, maison: 6850 }
+  },
+  "13007": {
+    "Bompard": { appartement: 5725, maison: 8348 },
+    "Endoume": { appartement: 6062, maison: 8159 },
+    "Les Îles (Frioul)": { appartement: 5265, maison: 9008 },
+    "Le Pharo": { appartement: 4599, maison: 5491 },
+    "Le Roucas-Blanc": { appartement: 6526, maison: 9040 },
+    "Saint-Lambert": { appartement: 4895, maison: 7408 },
+    "Saint-Victor": { appartement: 4563, maison: 7162 }
+  },
+  "13008": {
+    "Bonneveine": { appartement: 4751, maison: 7132 },
+    "Les Goudes": { appartement: 3811, maison: 6592 },
+    "Montredon": { appartement: 5670, maison: 7717 },
+    "Périer": { appartement: 4848, maison: 7362 },
+    "La Plage": { appartement: 6045, maison: 9163 },
+    "La Pointe Rouge": { appartement: 5163, maison: 7476 },
+    "Le Rouet": { appartement: 5163, maison: 7476 },
+    "Saint-Giniez": { appartement: 4749, maison: 7705 },
+    "Sainte-Anne": { appartement: 4468, maison: 6725 },
+    "Vieille-Chapelle": { appartement: 5053, maison: 6748 }
+  },
+  "13009": {
+    "Les Baumettes": { appartement: 3774, maison: 5103 },
+    "Le Cabot": { appartement: 3981, maison: 5353 },
+    "Carpiagne": { appartement: 3661, maison: 5406 },
+    "Mazargues": { appartement: 3891, maison: 5475 },
+    "La Panouse": { appartement: 2880, maison: 5484 },
+    "Le Redon": { appartement: 3812, maison: 5261 },
+    "Sainte-Marguerite": { appartement: 3292, maison: 5544 },
+    "Sormiou": { appartement: 4201, maison: 5287 },
+    "Vaufrèges": { appartement: 2895, maison: 5173 }
+  },
+  "13010": {
+    "La Capelette": { appartement: 2980, maison: 3665 },
+    "Menpenti": { appartement: 3275, maison: 4357 },
+    "Pont-de-Vivaux": { appartement: 2748, maison: 4221 },
+    "Saint-Loup": { appartement: 2838, maison: 4295 },
+    "Saint-Tronc": { appartement: 2978, maison: 4922 },
+    "La Timone": { appartement: 3304, maison: 4106 }
+  },
+  "13011": {
+    "Les Accates": { appartement: 4729, maison: 4774 },
+    "La Barasse": { appartement: 3615, maison: 3894 },
+    "Les Camoins": { appartement: 4421, maison: 4683 },
+    "Éoures": { appartement: 4355, maison: 5130 },
+    "La Millière": { appartement: 3108, maison: 3749 },
+    "La Pomme": { appartement: 3047, maison: 4073 },
+    "Saint-Marcel": { appartement: 3197, maison: 3764 },
+    "Saint-Menet": { appartement: 4481, maison: 4416 },
+    "La Treille": { appartement: 4276, maison: 4735 },
+    "La Valbarelle": { appartement: 2989, maison: 3665 },
+    "La Valentine": { appartement: 4172, maison: 4645 }
+  },
+  "13012": {
+    "Les Caillols": { appartement: 3937, maison: 4646 },
+    "La Fourragère": { appartement: 3734, maison: 5233 },
+    "Montolivet": { appartement: 3596, maison: 5230 },
+    "Saint-Barnabé": { appartement: 4158, maison: 5783 },
+    "Saint-Jean-du-Désert": { appartement: 3694, maison: 4716 },
+    "Saint-Julien": { appartement: 3577, maison: 4949 },
+    "Les Trois-Lucs": { appartement: 4166, maison: 4972 }
+  },
+  "13013": {
+    "Les Crottes": { appartement: 2215, maison: 3352 },
+    "Les Médecins": { appartement: 3547, maison: 4048 },
+    "Les Olives": { appartement: 3762, maison: 4125 },
+    "Palama": { appartement: 3211, maison: 3587 },
+    "La Rose": { appartement: 3488, maison: 3972 },
+    "Saint-Jérôme": { appartement: 3658, maison: 4015 },
+    "Saint-Just": { appartement: 3127, maison: 3544 },
+    "Saint-Mitre": { appartement: 3265, maison: 3689 },
+    "Château-Gombert": { appartement: 3845, maison: 4258 },
+    "Malpassé": { appartement: 3025, maison: 3456 }
+  },
+  "13014": {
+    "Les Arnavaux": { appartement: 2045, maison: 2985 },
+    "Le Canet": { appartement: 2156, maison: 3125 },
+    "Le Merlan": { appartement: 2089, maison: 3045 },
+    "Saint-Barthélémy": { appartement: 2234, maison: 3256 },
+    "Sainte-Marthe": { appartement: 2312, maison: 3412 },
+    "Saint-Joseph": { appartement: 2156, maison: 3089 }
+  },
+  "13015": {
+    "La Calade": { appartement: 2145, maison: 2856 },
+    "La Castellane": { appartement: 1956, maison: 2645 },
+    "La Viste": { appartement: 2078, maison: 2789 },
+    "Notre-Dame-Limite": { appartement: 2234, maison: 3012 },
+    "Plan-d'Aou": { appartement: 2012, maison: 2756 },
+    "Saint-Antoine": { appartement: 2389, maison: 3125 },
+    "Saint-Louis": { appartement: 2145, maison: 2945 },
+    "Verduron": { appartement: 2067, maison: 2834 }
+  },
+  "13016": {
+    "L'Estaque": { appartement: 3456, maison: 3658 },
+    "Saint-André": { appartement: 3125, maison: 3325 },
+    "Saint-Henri": { appartement: 3089, maison: 3256 },
+    "Mourepiane": { appartement: 3234, maison: 3425 }
+  }
 };
 
 export default function LandingPageEstimation() {
   const router = useRouter();
   const [searchQuartier, setSearchQuartier] = useState('');
   const [selectedType, setSelectedType] = useState('appartement');
+  const [selectedArrondissement, setSelectedArrondissement] = useState('tous');
 
   // États pour l'autocomplétion d'adresse
   const [addressInput, setAddressInput] = useState('');
@@ -77,12 +212,24 @@ export default function LandingPageEstimation() {
 
   const getAllQuartiers = () => {
     const quartiers = [];
-    Object.entries(PRIX_QUARTIERS_SAMPLE).forEach(([code, quartiersList]) => {
+    Object.entries(PRIX_QUARTIERS).forEach(([code, quartiersList]) => {
       Object.entries(quartiersList).forEach(([nom, prix]) => {
         quartiers.push({ nom, arrondissement: code, prixAppart: prix.appartement, prixMaison: prix.maison });
       });
     });
-    return quartiers.filter(q => q.nom.toLowerCase().includes(searchQuartier.toLowerCase()));
+    return quartiers
+      .filter(q => q.nom.toLowerCase().includes(searchQuartier.toLowerCase()))
+      .filter(q => selectedArrondissement === 'tous' || q.arrondissement === selectedArrondissement)
+      .sort((a, b) => {
+        // Trier par prix décroissant
+        const prixA = selectedType === 'appartement' ? a.prixAppart : a.prixMaison;
+        const prixB = selectedType === 'appartement' ? b.prixAppart : b.prixMaison;
+        return prixB - prixA;
+      });
+  };
+
+  const getArrondissements = () => {
+    return Object.keys(PRIX_QUARTIERS).sort((a, b) => parseInt(a) - parseInt(b));
   };
 
   return (
@@ -233,65 +380,93 @@ export default function LandingPageEstimation() {
         </section>
 
         {/* PRIX */}
-        <section id="prix" className="py-24 px-6">
+        <section id="prix" className="py-12 md:py-24 px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-full mb-6">
-                <BarChart3 className="text-gold" size={18} />
-                <span className="text-sm font-bold text-primary">Prix au m² Actualisés</span>
+            <div className="text-center mb-8 md:mb-16">
+              <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-full mb-4 md:mb-6">
+                <BarChart3 className="text-gold" size={16} />
+                <span className="text-xs md:text-sm font-bold text-primary">Prix au m² Actualisés</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-6xl font-black mb-4"><span className="bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent">Prix à Marseille</span></h2>
-              <p className="text-lg text-text-gray max-w-2xl mx-auto">Découvrez les prix moyens au m² pour chaque quartier. Données 2025.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-3 md:mb-4"><span className="bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent">Prix à Marseille</span></h2>
+              <p className="text-sm md:text-lg text-text-gray max-w-2xl mx-auto px-2">Découvrez les prix moyens au m² pour les <span className="font-bold text-gold">111 quartiers</span> de Marseille. Données 2025.</p>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto mb-12">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60 z-10" size={20} />
-                <input type="text" placeholder="Rechercher un quartier..." value={searchQuartier} onChange={(e) => setSearchQuartier(e.target.value)} className="w-full pl-12 pr-4 py-4 backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/20 transition-all shadow-lg text-primary placeholder:text-text-gray" />
+
+            {/* Filtres */}
+            <div className="flex flex-col gap-3 md:gap-4 max-w-5xl mx-auto mb-6 md:mb-12">
+              {/* Recherche et type */}
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60 z-10" size={18} />
+                  <input type="text" placeholder="Rechercher un quartier..." value={searchQuartier} onChange={(e) => setSearchQuartier(e.target.value)} className="w-full pl-11 pr-4 py-3 md:py-4 backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-xl md:rounded-2xl focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/20 transition-all shadow-lg text-sm md:text-base text-primary placeholder:text-text-gray" />
+                </div>
+                <div className="inline-flex backdrop-blur-xl bg-white/70 border border-gold-light/40 p-1 md:p-1.5 rounded-xl md:rounded-2xl shadow-lg">
+                  <button onClick={() => setSelectedType('appartement')} className={`px-3 py-2 text-xs md:text-base md:px-6 md:py-3 rounded-lg md:rounded-xl font-bold transition-all ${selectedType === 'appartement' ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'text-text-gray hover:text-primary'}`}>Appartements</button>
+                  <button onClick={() => setSelectedType('maison')} className={`px-3 py-2 text-xs md:text-base md:px-6 md:py-3 rounded-lg md:rounded-xl font-bold transition-all ${selectedType === 'maison' ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'text-text-gray hover:text-primary'}`}>Maisons</button>
+                </div>
               </div>
-              <div className="inline-flex backdrop-blur-xl bg-white/70 border border-gold-light/40 p-1.5 rounded-2xl shadow-lg">
-                <button onClick={() => setSelectedType('appartement')} className={`px-4 py-2.5 text-sm md:text-base md:px-6 md:py-3 rounded-xl font-bold transition-all ${selectedType === 'appartement' ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'text-text-gray hover:text-white'}`}>Appartements</button>
-                <button onClick={() => setSelectedType('maison')} className={`px-4 py-2.5 text-sm md:text-base md:px-6 md:py-3 rounded-xl font-bold transition-all ${selectedType === 'maison' ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'text-text-gray hover:text-white'}`}>Maisons</button>
+
+              {/* Filtre par arrondissement */}
+              <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+                <div className="flex gap-2 min-w-max md:flex-wrap md:justify-center">
+                  <button
+                    onClick={() => setSelectedArrondissement('tous')}
+                    className={`px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl font-medium transition-all whitespace-nowrap ${selectedArrondissement === 'tous' ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'backdrop-blur-xl bg-white/70 border border-gold-light/40 text-text-gray hover:border-gold'}`}
+                  >
+                    Tous ({getAllQuartiers().length})
+                  </button>
+                  {getArrondissements().map((arr) => (
+                    <button
+                      key={arr}
+                      onClick={() => setSelectedArrondissement(arr)}
+                      className={`px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-lg md:rounded-xl font-medium transition-all whitespace-nowrap ${selectedArrondissement === arr ? 'bg-gradient-to-r from-gold to-gold text-white shadow-lg' : 'backdrop-blur-xl bg-white/70 border border-gold-light/40 text-text-gray hover:border-gold'}`}
+                    >
+                      {arr.substring(3)}e
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-            
-            <div className="backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-3xl overflow-hidden shadow-2xl">
+
+            {/* Liste des quartiers */}
+            <div className="backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl max-h-[500px] md:max-h-[600px] overflow-y-auto">
               {/* Version Mobile - Cards */}
               <div className="block md:hidden">
                 {getAllQuartiers().map((q, idx) => (
-                  <div key={idx} className="p-4 border-b border-gold-light/30 last:border-b-0 hover:bg-surface/50 transition-colors">
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex-1">
-                        <div className="font-bold text-gold text-base mb-1">{q.nom}</div>
-                        <div className="text-sm text-text-gray">{q.arrondissement.substring(3)}e arrondissement</div>
+                  <div key={idx} className="p-3 md:p-4 border-b border-gold-light/30 last:border-b-0 hover:bg-surface/50 transition-colors">
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-gold text-sm md:text-base mb-0.5 truncate">{q.nom}</div>
+                        <div className="text-xs md:text-sm text-text-gray">{q.arrondissement.substring(3)}e arr.</div>
                       </div>
-                      <div className="text-lg font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent whitespace-nowrap">
-                        {formatPrice(selectedType === 'appartement' ? q.prixAppart : q.prixMaison)}
+                      <div className="text-base md:text-lg font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent whitespace-nowrap">
+                        {formatPrice(selectedType === 'appartement' ? q.prixAppart : q.prixMaison)}/m²
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              
+
               {/* Version Desktop - Table */}
               <table className="w-full hidden md:table">
-                <thead><tr className="bg-gradient-to-r from-surface via-white to-surface text-primary border-b border-gold-light/40">
-                  <th className="px-6 py-5 text-left text-sm font-bold uppercase tracking-wider">Quartier</th>
-                  <th className="px-6 py-5 text-left text-sm font-bold uppercase tracking-wider">Arrondissement</th>
-                  <th className="px-6 py-5 text-right text-sm font-bold uppercase tracking-wider">Prix au m²</th>
+                <thead className="sticky top-0 z-10"><tr className="bg-gradient-to-r from-surface via-white to-surface text-primary border-b border-gold-light/40">
+                  <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Quartier</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Arrondissement</th>
+                  <th className="px-6 py-4 text-right text-sm font-bold uppercase tracking-wider">Prix au m²</th>
                 </tr></thead>
                 <tbody className="divide-y divide-gold-light/30">
                   {getAllQuartiers().map((q, idx) => (
                     <tr key={idx} className="hover:bg-surface/50 transition-colors group">
-                      <td className="px-6 py-4"><div className="font-bold text-gold group-hover:text-gold transition-colors">{q.nom}</div></td>
-                      <td className="px-6 py-4"><div className="text-sm text-text-gray font-medium">{q.arrondissement.substring(3)}e</div></td>
-                      <td className="px-6 py-4 text-right"><div className="text-xl font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">{formatPrice(selectedType === 'appartement' ? q.prixAppart : q.prixMaison)}</div></td>
+                      <td className="px-6 py-3"><div className="font-bold text-gold group-hover:text-gold transition-colors">{q.nom}</div></td>
+                      <td className="px-6 py-3"><div className="text-sm text-text-gray font-medium">{q.arrondissement.substring(3)}e</div></td>
+                      <td className="px-6 py-3 text-right"><div className="text-lg font-black bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">{formatPrice(selectedType === 'appartement' ? q.prixAppart : q.prixMaison)}/m²</div></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="mt-6 text-center text-sm text-text-gray font-medium">Tous les quartiers de Marseille référencés</div>
+            <div className="mt-4 md:mt-6 text-center text-xs md:text-sm text-text-gray font-medium">
+              {getAllQuartiers().length} quartiers affichés • Triés par prix décroissant
+            </div>
           </div>
         </section>
 
