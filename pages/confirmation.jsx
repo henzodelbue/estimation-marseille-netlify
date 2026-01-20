@@ -21,13 +21,13 @@ export default function ConfirmationPage() {
         .animate-checkmark { animation: checkmark 0.6s ease-out forwards; }
       `}</style>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-24 md:pt-28">
 
         {/* NAV */}
         <Navigation />
 
         {/* CONFIRMATION CONTENT */}
-        <section className="pt-16 pb-24 px-6">
+        <section className="pt-8 pb-24 px-6">
           <div className="max-w-2xl mx-auto">
 
             {/* Success Card */}

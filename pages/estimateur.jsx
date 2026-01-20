@@ -363,11 +363,11 @@ export default function EstimateurPage() {
         .animate-spin-slow { animation: spin 1s linear infinite; }
       `}</style>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-24 md:pt-28">
         {/* NAV */}
         <Navigation />
 
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-6 py-4">
 
           {/* Progress Bar */}
           {currentStep !== 7 && currentStep !== 8 && (

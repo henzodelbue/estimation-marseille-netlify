@@ -261,13 +261,13 @@ export default function LandingPageEstimation() {
         .animate-float { animation: float linear infinite; }
       `}</style>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-24 md:pt-28">
 
         {/* NAV */}
         <Navigation />
 
         {/* HERO */}
-        <section className="pt-20 pb-24 px-6">
+        <section className="pt-12 pb-24 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-center mb-12">
               <div className="inline-flex items-center gap-2.5 px-6 py-3 backdrop-blur-2xl bg-white/70 border border-gold-light/40 rounded-full shadow-2xl shadow-gold/20">

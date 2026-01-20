@@ -18,12 +18,12 @@ export default function QuiSommesNousPage() {
         .animation-delay-2000 { animation-delay: 2s; }
       `}</style>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-24 md:pt-28">
         {/* Navigation */}
         <Navigation />
 
         {/* Hero Section */}
-        <section className="pt-12 md:pt-16 pb-8 md:pb-12 px-4 md:px-6">
+        <section className="pt-8 md:pt-12 pb-8 md:pb-12 px-4 md:px-6">
           <div className="max-w-5xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 backdrop-blur-xl bg-white/70 border border-gold-light/40 rounded-full mb-4 md:mb-6">
               <Award className="text-gold" size={16} />
