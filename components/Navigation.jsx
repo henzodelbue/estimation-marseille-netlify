@@ -16,7 +16,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Estimation Marseille" className="h-14 md:h-16 w-auto" />
+            <img src="/logo.png" alt="Estimation Marseille" className="h-20 md:h-24 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
