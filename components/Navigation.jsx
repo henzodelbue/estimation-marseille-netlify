@@ -16,10 +16,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2">
-            <span className="text-xl md:text-2xl font-black">
-              <span className="text-primary">Estimation</span>
-              <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent"> Marseille</span>
-            </span>
+            <img src="/logo.png" alt="Estimation Marseille" className="h-14 md:h-16 w-auto" />
           </a>
 
           {/* Desktop Navigation */}

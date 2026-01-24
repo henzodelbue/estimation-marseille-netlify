@@ -282,7 +282,6 @@ export default function LandingPageEstimation() {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <div>
-                  <img src="/logo.png" alt="Estimation Marseille" className="h-28 md:h-36 w-auto mb-6" />
                   <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-[1.1]">
                     <span className="bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent drop-shadow-2xl">Estimez votre bien</span>
                     <br />
