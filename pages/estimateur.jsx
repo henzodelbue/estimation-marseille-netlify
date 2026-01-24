@@ -941,8 +941,10 @@ export default function EstimateurPage() {
         {/* Footer */}
         <footer className="border-t border-gold-light/40 backdrop-blur-xl bg-white/70 py-8 px-6 mt-12">
           <div className="max-w-7xl mx-auto text-center">
-            <img src="/logo.png" alt="Estimation Marseille" className="h-14 md:h-16 w-auto mx-auto mb-3" />
-            <p className="text-sm text-text-gray">&copy; 2025 Henzo DEL BUE • Llinares Immobilier</p>
+            <div className="text-2xl font-bold text-gold-primary mb-3">
+              <span className="text-gold-dark">Estimation</span> <span className="text-gold-primary">Marseille</span>
+            </div>
+            <p className="text-sm text-text-gray">&copy; 2025 Henzo DEL BUE</p>
           </div>
         </footer>
       </div>

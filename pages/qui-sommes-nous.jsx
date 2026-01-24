@@ -1,6 +1,6 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
-import { Award, Shield, Users, MapPin, Phone, Mail, CheckCircle, Building, TrendingUp, Star } from 'lucide-react';
+import { Award, Shield, Users, MapPin, Phone, Mail, CheckCircle, TrendingUp, Star } from 'lucide-react';
 
 export default function QuiSommesNousPage() {
   return (
@@ -35,7 +35,7 @@ export default function QuiSommesNousPage() {
               <span className="bg-gradient-to-r from-gold via-gold to-gold-light bg-clip-text text-transparent">immobilier à Marseille</span>
             </h1>
             <p className="text-base md:text-lg text-text-gray max-w-2xl mx-auto px-2">
-              Conseiller immobilier chez Llinares Immobilier, je vous accompagne dans tous vos projets immobiliers avec sérieux et professionnalisme.
+              Conseiller immobilier, je vous accompagne dans tous vos projets immobiliers avec sérieux et professionnalisme.
             </p>
           </div>
         </section>
@@ -56,8 +56,8 @@ export default function QuiSommesNousPage() {
                 <h2 className="text-xl md:text-2xl font-bold text-primary mb-2">Henzo DEL BUE</h2>
                 <p className="text-gold font-medium mb-4">Conseiller Immobilier</p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 rounded-full">
-                  <Building className="text-gold" size={18} />
-                  <span className="text-sm font-medium text-primary">Llinares Immobilier</span>
+                  <MapPin className="text-gold" size={18} />
+                  <span className="text-sm font-medium text-primary">Marseille</span>
                 </div>
               </div>
 
@@ -174,8 +174,11 @@ export default function QuiSommesNousPage() {
         {/* Footer */}
         <footer className="border-t border-gold-light/40 backdrop-blur-xl bg-white/70 py-6 md:py-8 px-4 md:px-6">
           <div className="max-w-7xl mx-auto text-center">
-            <img src="/logo.png" alt="Estimation Marseille" className="h-14 md:h-16 w-auto mx-auto mb-3" />
-            <p className="text-xs md:text-sm text-text-gray">&copy; 2025 Henzo DEL BUE • Llinares Immobilier</p>
+            <div className="text-xl md:text-2xl font-black mb-3">
+              <span className="text-primary">Estimation</span>
+              <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent"> Marseille</span>
+            </div>
+            <p className="text-xs md:text-sm text-text-gray">&copy; 2025 Henzo DEL BUE</p>
           </div>
         </footer>
       </div>

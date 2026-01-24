@@ -1,6 +1,6 @@
 # Estimation Immobilière Marseille
 
-Landing page avec les couleurs Llinares Immobilier (#c9a962 doré).
+Landing page d'estimation immobilière avec un thème doré (#c9a962).
 
 ## 🚀 Déploiement sur Vercel
 
@@ -20,7 +20,7 @@ vercel
 
 ## 🎨 Couleurs personnalisées
 
-Les couleurs Llinares sont définies dans `tailwind.config.js` :
+Les couleurs sont définies dans `tailwind.config.js` :
 - `gold` : #c9a962 (doré)
 - `gold-light` : #e8d4a0 (beige doré)
 - `primary` : #1a1a2e (bleu marine foncé)

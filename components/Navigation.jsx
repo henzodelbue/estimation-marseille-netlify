@@ -15,12 +15,11 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Estimation Marseille"
-              className="h-16 md:h-20 w-auto"
-            />
+          <a href="/" className="flex items-center gap-2">
+            <span className="text-xl md:text-2xl font-black">
+              <span className="text-primary">Estimation</span>
+              <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent"> Marseille</span>
+            </span>
           </a>
 
           {/* Desktop Navigation */}

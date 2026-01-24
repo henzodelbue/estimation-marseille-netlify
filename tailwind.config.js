@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Couleurs Llinares Immobilier
+        // Couleurs du thème
         'gold': '#c9a962',
         'gold-light': '#e8d4a0',
         'primary': '#1a1a2e',

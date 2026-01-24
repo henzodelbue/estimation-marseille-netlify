@@ -537,8 +537,11 @@ export default function LandingPageEstimation() {
           <div className="max-w-7xl mx-auto">
             <div className="grid md:grid-cols-4 gap-8 mb-8">
               <div className="md:col-span-2">
-                <div className="flex items-center gap-3 mb-4">
-                  <img src="/logo.png" alt="Estimation Marseille" className="h-16 md:h-20 w-auto" />
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xl md:text-2xl font-black">
+                    <span className="text-primary">Estimation</span>
+                    <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent"> Marseille</span>
+                  </span>
                 </div>
                 <p className="text-text-gray text-sm">Service d'estimation immobilière gratuite. Données actualisées et expertise locale.</p>
               </div>
